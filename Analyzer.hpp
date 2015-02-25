@@ -14,7 +14,9 @@ class Analyzer
 		static bool		_isLParenthesis(Token & token);
 		static bool		_isRParenthesis(Token & token);
 		static bool		_isOperator(Token & token);
-		static bool		_isType(Token & token);
+		static bool		_isValueOperator(Token & token);
+		static bool		_isIntPrecision(Token & token);
+		static bool		_isFloatPrecision(Token & token);
 		static bool		_isNaturalVal(Token & token);
 		static bool		_isFloatingVal(Token & token);
 		static bool		_isSeparator(Token & token);
@@ -24,8 +26,10 @@ class Analyzer
 		Analyzer(Analyzer const & src);
 		~Analyzer( void );
 		Analyzer &	operator=(Analyzer const & rhs);
-		static std::string operators[11];
-		static std::string types[5];
+		static std::string operators[9];
+		static std::string value_operators[2];
+		static std::string int_precisions[3];
+		static std::string float_precisions[2];
 };
 typedef bool (*f)(Token & token);
 
