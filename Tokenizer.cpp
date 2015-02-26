@@ -6,7 +6,6 @@ void						Tokenizer::_addToken(size_t last_found, size_t found, size_t * line, s
 	std::string				value;
 	std::stringstream		ss;
 
-	std::cout << *line << std::endl;
 	value = content.substr(last_found, found - last_found);
 	if (value.compare("") != 0)
 	{
@@ -29,6 +28,11 @@ size_t						Tokenizer::_findNotComment(size_t * last_found, size_t * line, std::
 	if (found != std::string::npos && content[found] == ';')
 	{
 		found = content.find_first_of("\n", found);
+		if (found == std::string::npos)
+		{
+			*last_found = found;
+			return found;
+		}
 		*last_found = found + 1;
 		(*line)++;
 		return Tokenizer::_findNotComment(last_found, line, content);
@@ -50,6 +54,7 @@ std::list<Token> *			Tokenizer::tokenize(std::string const & content)
 		last_found = found + 1;
 		found = Tokenizer::_findNotComment(&last_found, &line, content);
 	}
-	Tokenizer::_addToken(last_found, found, &line, content, tokens);
+	if (last_found != std::string::npos)
+		Tokenizer::_addToken(last_found, found, &line, content, tokens);
 	return tokens;
 }

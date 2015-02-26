@@ -1,8 +1,40 @@
 
 #include "Analyzer.hpp"
 
+Analyzer::AnalyzerException::AnalyzerException(std::string message, size_t line) : _message(message), _line(line)
+{
+	return ;
+}
+
+Analyzer::AnalyzerException::AnalyzerException(AnalyzerException const & src)
+{
+	*this = src;
+	return ;
+}
+
+Analyzer::AnalyzerException::~AnalyzerException(void) throw()
+{
+	return ;
+}
+
+const char *					Analyzer::AnalyzerException::what() const throw()
+{
+	std::stringstream ss;
+
+	ss << "Line " << this->_line << " : lexical error : " << this->_message;
+	return ss.str().c_str();
+}
+
+Analyzer::AnalyzerException &	Analyzer::AnalyzerException::operator=(AnalyzerException const & rhs)
+{
+	this->_message = rhs._message;
+	this->_line = rhs._line;
+	return *this;
+}
+
 void			Analyzer::analyze(std::list<Token> * tokens)
 {
+	std::stringstream ss;
 	f tab[] =
 	{
 		&Analyzer::_isLParenthesis,
@@ -22,9 +54,14 @@ void			Analyzer::analyze(std::list<Token> * tokens)
 			if (tab[i](*it))
 				break;
 		}
-		/* TODO : throw exception if UNKNOWN */
+		if ((*it).getType() == UNKNOWN)
+		{
+			ss << "unexpected token : ";
+			ss << (*it).getValue();
+			throw Analyzer::AnalyzerException(ss.str(), (*it).getLine());
+		}
 	}
-	tokens->push_back(Token(END_OF_FILE));
+	tokens->push_back(Token(END_OF_FILE, tokens->back().getLine()));
 }
 
 bool			Analyzer::_isLParenthesis(Token & token)
@@ -105,7 +142,7 @@ bool				Analyzer::_isNaturalVal(Token & token)
 
 	if (*str == '-')
 		str++;
-	while (*str > '0' && *str < '9')
+	while (*str >= '0' && *str <= '9')
 	{
 		str++;
 		num = true;
@@ -125,7 +162,7 @@ bool				Analyzer::_isFloatingVal(Token & token)
 
 	if (*str == '-')
 		str++;
-	while (*str > '0' && *str < '9')
+	while (*str >= '0' && *str <= '9')
 	{
 		str++;
 		num = true;
@@ -135,7 +172,7 @@ bool				Analyzer::_isFloatingVal(Token & token)
 	if (*str == '.')
 		str++;
 	else return false;
-	while (*str > '0' && *str < '9')
+	while (*str >= '0' && *str <= '9')
 	{
 		str++;
 		num = true;

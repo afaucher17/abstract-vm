@@ -6,7 +6,7 @@ Token::Token( void ) : _value(""), _type(UNKNOWN), _line(0)
 	return ;
 }
 
-Token::Token( tokenType type ) : _value(""), _type(type), _line(0)
+Token::Token( tokenType type , size_t line ) : _value(""), _type(type), _line(line)
 {
 	return ;
 }
@@ -43,6 +43,20 @@ std::string					Token::getValue( void ) const
 tokenType					Token::getType( void ) const
 {
 	return this->_type;
+}
+
+std::string					Token::toString( void ) const
+{
+	std::stringstream ss;
+
+	ss << "";
+	if (this->_type == END_OF_FILE)
+		ss << "end of file";
+	else if (this->_value.compare("\n") == 0)
+		ss << "end of line";
+	else if (this->_value.compare("") != 0)
+		ss << this->_value;
+	return ss.str();
 }
 
 size_t						Token::getLine( void ) const

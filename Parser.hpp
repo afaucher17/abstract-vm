@@ -2,6 +2,7 @@
 # define PARSER_HPP
 # include <string>
 # include <iostream>
+# include <sstream>
 # include <list>
 # include <exception>
 # include "Token.hpp"
@@ -11,9 +12,19 @@ class Parser
 	public:
 		class ParserException : public std::exception
 		{
-
+			public:
+				ParserException(std::string message, size_t line);
+				ParserException(ParserException const & src);
+				~ParserException(void) throw ();
+				virtual const char *	what() const throw();
+				ParserException &		operator=(ParserException const & rhs);
+			private:
+				std::string		_message;
+				size_t			_line;
+				ParserException(void);
 		};
 		static bool		parse(std::list<Token> * tokens);
+		~Parser(void);
 
 	private:
 		static bool		isInstr(std::list<Token>::const_iterator * ptr_it);
@@ -29,7 +40,6 @@ class Parser
 		static bool		isOperator(std::list<Token>::const_iterator * ptr_it);
 		Parser( bool );
 		Parser(Parser const & src);
-		~Parser( bool );
 		Parser &	operator=(Parser const & rhs);
 };
 

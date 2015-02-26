@@ -1,6 +1,7 @@
 #include "Tokenizer.hpp"
 #include "Token.hpp"
 #include "Analyzer.hpp"
+#include "Parser.hpp"
 #include <fstream>
 
 int main()
@@ -18,17 +19,23 @@ int main()
 		myfile.close();
 	}
 	else std::cout << "Unable to open file" << std::endl;
-	std::cout << ss.str();
 	std::list<Token> *		tokens = Tokenizer::tokenize(ss.str());
-
-	for (std::list<Token>::iterator it = tokens->begin(); it != tokens->end(); ++it)
+	try
 	{
-		std::cout << "{" << (*it).getValue() << "}" << std::endl;
+		Analyzer::analyze(tokens);
+		Parser::parse(tokens);
+		// TODO : Transform into exec
+		// TODO : Exec
 	}
-	Analyzer::analyze(tokens);
-	for (std::list<Token>::iterator it = tokens->begin(); it != tokens->end(); ++it)
+	catch (const Parser::ParserException & e)
 	{
-		std::cout << *it << std::endl;
+		std::cout << e.what() << std::endl;
 	}
-return (0);
+	catch (const Analyzer::AnalyzerException & e)
+	{
+		std::cout << e.what() << std::endl;
+	}
+	// TODO : Catch transorm exec error
+	// TODO : Catch exec error
+	return (0);
 }
