@@ -24,7 +24,6 @@ class Parser
 				ParserException(void);
 		};
 		static bool		parse(std::list<Token> * tokens);
-		~Parser(void);
 
 	private:
 		static bool		isInstr(std::list<Token>::const_iterator * ptr_it);
@@ -38,9 +37,6 @@ class Parser
 		static bool		isFloatingValue(std::list<Token>::const_iterator * ptr_it);
 		static bool		isValueOperator(std::list<Token>::const_iterator * ptr_it);
 		static bool		isOperator(std::list<Token>::const_iterator * ptr_it);
-		Parser( bool );
-		Parser(Parser const & src);
-		Parser &	operator=(Parser const & rhs);
 };
 
 #endif /* PARSER_HPP */

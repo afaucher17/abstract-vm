@@ -13,10 +13,6 @@ class Tokenizer
 	private:
 		static void						_addToken(size_t last_found, size_t found, size_t *line, std::string const & content, std::list<Token> * tokens);
 		static size_t					_findNotComment(size_t  * last_found, size_t * line, std::string const & content);
-		Tokenizer( void );
-		Tokenizer(Tokenizer const & src);
-		~Tokenizer( void );
-		Tokenizer &						operator=(Tokenizer const & rhs);
 };
 
 #endif /* TOKENIZER_HPP */
