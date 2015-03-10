@@ -5,6 +5,15 @@ CXXFLAGS = -Wall -Werror -Wextra -g -std=c++98 -pedantic-errors
 SOURCES = Tokenizer.cpp \
 		  Token.cpp \
 		  Analyzer.cpp \
+		  Calculator.cpp \
+		  Double.cpp \
+		  Float.cpp \
+		  Int8.cpp \
+		  Int16.cpp \
+		  Int32.cpp \
+		  Instruction.cpp \
+		  InstructionFactory.cpp \
+		  OperandFactory.cpp \
 		  Parser.cpp \
 		  main.cpp \
 

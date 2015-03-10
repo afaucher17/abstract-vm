@@ -1,8 +1,18 @@
 #include "OperandFactory.hpp"
 
+const char *		OperandFactory::OperandOverflowException::what() const throw()
+{
+	return ("Overflow of the value of the operand.");
+}
+
+const char *		OperandFactory::OperandUnderflowException::what() const throw()
+{
+	return ("Underflow of the value of the operand.");
+}
+
 IOperand const * OperandFactory::createOperand( eOperandType type, std::string const & value ) const
 {
-	f tab[] =
+	of tab[] =
 	{
 		&OperandFactory::_createInt8,
 		&OperandFactory::_createInt16,
@@ -13,7 +23,7 @@ IOperand const * OperandFactory::createOperand( eOperandType type, std::string c
 	return ((this->*tab[type])(value));
 }
 
-const * OperandFactory::_createInt8( std::string const & value ) const
+IOperand const * OperandFactory::_createInt8( std::string const & value ) const
 {
 	std::string		str = this->_trimFloat(value);
 	double			dvalue = std::atof(str.c_str());
@@ -53,9 +63,9 @@ IOperand const * OperandFactory::_createFloat( std::string const & value ) const
 {
 	double			dvalue = std::atof(value.c_str());
 
-	if (dvalue < std::numeric_limits<float>::min())
+	if (std::abs(dvalue) > 0.0 && std::abs(dvalue) < std::numeric_limits<float>::min())
 		throw OperandUnderflowException();
-	if (dvalue > std::numeric_limits<float>::max())
+	if (std::abs(dvalue) > std::numeric_limits<float>::max())
 		throw OperandOverflowException();
 	return (new Float(value));
 }
@@ -64,9 +74,9 @@ IOperand const * OperandFactory::_createDouble( std::string const & value ) cons
 {
 	double			dvalue = std::atof(value.c_str());
 
-	if (dvalue < std::numeric_limits<double>::min())
+	if (std::abs(dvalue) > 0.0 && std::abs(dvalue) < std::numeric_limits<double>::min())
 		throw OperandUnderflowException();
-	if (dvalue > std::numeric_limits<double>::max())
+	if (std::abs(dvalue) > std::numeric_limits<double>::max())
 		throw OperandOverflowException();
 	return (new Double(value));
 }

@@ -1,21 +1,26 @@
 #ifndef CALCULATOR_HPP
 # define CALCULATOR_HPP
-# include <string>
+
 # include <sstream>
-# include <iostream>
+# include <cstdlib>
+# include <exception>
+# include "IOperand.hpp"
+# include "OperandFactory.hpp"
 
 class Calculator
 {
 	public:
-		Calculator( void );
-		Calculator(Calculator const & src);
-		~Calculator( void );
-		Calculator &	operator=(Calculator const & rhs);
-		std::string	toString() const;
+		class FloatingPointException : public std::exception
+		{
+			public:
+				virtual const char *			what() const throw();
+		};
+		virtual ~Calculator( void );
 
-	private:
+		static IOperand const *		add(IOperand const & lhs, IOperand const & rhs);
+		static IOperand const *		sub(IOperand const & lhs, IOperand const & rhs);
+		static IOperand const *		mul(IOperand const & lhs, IOperand const & rhs);
+		static IOperand const *		div(IOperand const & lhs, IOperand const & rhs);
+		static IOperand const *		mod(IOperand const & lhs, IOperand const & rhs);
 };
-
-std::ostream &		operator<<(std::ostream & o, Calculator const & rhs);
-
 #endif /* CALCULATOR_HPP */

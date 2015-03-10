@@ -1,10 +1,19 @@
 ; -------------
 ; exemple.avm -
 ; -------------
- ;  ewfwefew
-;push int32(-334)
-;push int32(33)
-;iadd
-push float(44.55 ;)
-;mul
-;push double(42.05)
+
+push int32(42)
+push int32(33)
+add
+push float(44.55)
+mul
+push double(42.42)
+push int32(42)
+damp
+pop
+push int8(0)
+push int32(32)
+div
+dump
+assert int(0)
+exit

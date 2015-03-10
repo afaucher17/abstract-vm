@@ -6,17 +6,26 @@
 # include <exception>
 # include <limits>
 # include <cstdlib>
+# include <cmath>
 # include "IOperand.hpp"
+# include "Int8.hpp"
+# include "Int16.hpp"
+# include "Int32.hpp"
+# include "Float.hpp"
+# include "Double.hpp"
 
 class OperandFactory
 {
 	public:
-		class OperandOverflowException : public std::exception
+		class OperandException : public std::exception
+		{
+		};
+		class OperandOverflowException : public OperandException
 		{
 			public:
 				virtual const char *	what() const throw();
 		};
-		class OperandUnderflowException : public std::exception
+		class OperandUnderflowException : public OperandException
 		{
 			public:
 				virtual const char *	what() const throw();
@@ -36,5 +45,5 @@ class OperandFactory
 		OperandFactory(OperandFactory const & src);
 		OperandFactory &	operator=(OperandFactory const & rhs);
 };
-typedef IOperand const * (OperandFactory::*f)(std::string const & value) const;
+typedef IOperand const * (OperandFactory::*of)(std::string const & value) const;
 #endif /* OPERANDFACTORY_HPP */
