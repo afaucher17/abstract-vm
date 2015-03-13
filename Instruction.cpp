@@ -1,5 +1,20 @@
 #include "Instruction.hpp"
 
+const char *		Instruction::PopEmptyStackException::what() const throw()
+{
+	return ("Pop on empty stack");
+}
+
+const char *		Instruction::AssertEmptyStackException::what() const throw()
+{
+	return ("Assert on empty stack");
+}
+
+const char  *		Instruction::PrintEmptyStackException::what() const throw()
+{
+	return ("Print on empty stack");
+}
+
 const char *		Instruction::EmptyStackException::what() const throw()
 {
 	return ("The stack is empty.");
@@ -7,12 +22,17 @@ const char *		Instruction::EmptyStackException::what() const throw()
 
 const char *		Instruction::AssertException::what() const throw()
 {
-	return ("Assert is false.");
+	return ("The asserted value is not the one expected.");
 }
 
 const char *		Instruction::NotEnoughValuesException::what() const throw()
 {
 	return ("Not enough values in the stack");
+}
+
+const char *		Instruction::PrintNotCharException::what() const throw()
+{
+	return ("The value on top on the stack is not an Int8");
 }
 
 Instruction::Instruction( e_type type, size_t line ) : _type(type), _line(line)
@@ -61,7 +81,26 @@ bool				Instruction::execute_fun(std::list<const IOperand *> & stk) const
 		&Instruction::_print,
 		&Instruction::_exit
 	};
-	return ((this->*tab[this->_type])(stk));
+	bool res = false;
+	try {
+		res = (this->*tab[this->_type])(stk);
+		return (res);
+	}
+	catch (const InstructionException & e)
+	{
+		std::cerr << "Line " << this->_line << " : Error : " << e.what() << std::endl;
+		throw;
+	}
+	catch (const OperandFactory::OperandException & e)
+	{
+		std::cerr << "Line " << this->_line << " : Error : " << e.what() << std::endl;
+		throw;
+	}
+	catch (const Calculator::CalculatorException & e)
+	{
+		std::cerr << "Line " << this->_line << " : Error : " << e.what() << std::endl;
+		throw;
+	}
 }
 
 bool				Instruction::_push(std::list<const IOperand *> & stk) const
@@ -77,7 +116,7 @@ bool				Instruction::_pop(std::list<const IOperand *> & stk) const
 	const IOperand *		op;
 
 	if (stk.empty())
-		throw EmptyStackException();
+		throw PopEmptyStackException();
 	op = (*stk.begin());
 	stk.pop_front();
 	delete op;
@@ -100,7 +139,7 @@ bool				Instruction::_assert(std::list<const IOperand *> & stk) const
 	const IOperand *		op2;
 
 	if (stk.empty())
-		throw EmptyStackException();
+		throw AssertEmptyStackException();
 	op1 = of.createOperand(this->_otype, this->_value);
 	op2 = (*stk.begin());
 	if (op1->getType() != op2->getType() || op1->toString().compare(op2->toString()) != 0)
@@ -212,7 +251,7 @@ bool				Instruction::_print(std::list<const IOperand *> & stk) const
 		throw EmptyStackException();
 	op1 = (*stk.begin());
 	if (op1->getType() == INT8)
-		throw AssertException();
+		throw PrintNotCharException();
 	std::cout << static_cast<char>(std::atoi(op1->toString().c_str())) << std::endl;
 	return (false);
 }

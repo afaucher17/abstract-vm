@@ -12,16 +12,41 @@ class Parser
 	public:
 		class ParserException : public std::exception
 		{
+		};
+		class InstructionException : public ParserException
+		{
 			public:
-				ParserException(std::string message, size_t line);
-				ParserException(ParserException const & src);
-				~ParserException(void) throw ();
 				virtual const char *	what() const throw();
-				ParserException &		operator=(ParserException const & rhs);
-			private:
-				std::string		_message;
-				size_t			_line;
-				ParserException(void);
+		};
+		class PrecisionException : public ParserException
+		{
+			public:
+				virtual const char *	what() const throw();
+		};
+		class LeftParenthesisException : public ParserException
+		{
+			public:
+				virtual const char *	what() const throw();
+		};
+		class RightParenthesisException : public ParserException
+		{
+			public:
+				virtual const char *	what() const throw();
+		};
+		class NaturalValueException : public ParserException
+		{
+			public:
+				virtual const char *	what() const throw();
+		};
+		class FloatingValueException : public ParserException
+		{
+			public:
+				virtual const char *	what() const throw();
+		};
+		class SeparatorException : public ParserException
+		{
+			public:
+				virtual const char *	what() const throw();
 		};
 		static bool		parse(std::list<Token> * tokens);
 

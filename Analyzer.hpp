@@ -12,16 +12,11 @@ class Analyzer
 	public:
 		class AnalyzerException : public std::exception
 		{
+		};
+		class UnexpectedTokenException : public AnalyzerException
+		{
 			public:
-				AnalyzerException(std::string message, size_t line);
-				AnalyzerException(AnalyzerException const & src);
-				~AnalyzerException(void) throw ();
 				virtual const char *	what() const throw();
-				AnalyzerException &		operator=(AnalyzerException const & rhs);
-			private:
-				std::string				_message;
-				size_t					_line;
-				AnalyzerException(void);
 		};
 		static void			analyze(std::list<Token> * tokens);
 		static bool			_isLParenthesis(Token & token);

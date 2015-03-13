@@ -1,35 +1,9 @@
 
 #include "Analyzer.hpp"
 
-Analyzer::AnalyzerException::AnalyzerException(std::string message, size_t line) : _message(message), _line(line)
+const char *					Analyzer::UnexpectedTokenException::what() const throw()
 {
-	return ;
-}
-
-Analyzer::AnalyzerException::AnalyzerException(AnalyzerException const & src)
-{
-	*this = src;
-	return ;
-}
-
-Analyzer::AnalyzerException::~AnalyzerException(void) throw()
-{
-	return ;
-}
-
-const char *					Analyzer::AnalyzerException::what() const throw()
-{
-	std::stringstream ss;
-
-	ss << "Line " << this->_line << " : lexical error : " << this->_message;
-	return ss.str().c_str();
-}
-
-Analyzer::AnalyzerException &	Analyzer::AnalyzerException::operator=(AnalyzerException const & rhs)
-{
-	this->_message = rhs._message;
-	this->_line = rhs._line;
-	return *this;
+	return ("Unexpected token : ");
 }
 
 void			Analyzer::analyze(std::list<Token> * tokens)
@@ -47,21 +21,26 @@ void			Analyzer::analyze(std::list<Token> * tokens)
 		&Analyzer::_isFloatingVal,
 		&Analyzer::_isSeparator
 	};
-	for (std::list<Token>::iterator it = tokens->begin(); it != tokens->end(); ++it)
-	{
-		for (int i = 0; i < 9; i++)
+	std::list<Token>::iterator it = tokens->begin();
+	try {
+		while (it != tokens->end())
 		{
-			if (tab[i](*it))
-				break;
+			for (int i = 0; i < 9; i++)
+			{
+				if (tab[i](*it))
+					break;
+			}
+			if ((*it).getType() == UNKNOWN)
+				throw UnexpectedTokenException();
+			++it;
 		}
-		if ((*it).getType() == UNKNOWN)
-		{
-			ss << "unexpected token : ";
-			ss << (*it).getValue();
-			throw Analyzer::AnalyzerException(ss.str(), (*it).getLine());
-		}
+		tokens->push_back(Token(END_OF_FILE, tokens->back().getLine()));
 	}
-	tokens->push_back(Token(END_OF_FILE, tokens->back().getLine()));
+	catch (const AnalyzerException & e)
+	{
+		std::cerr << "Line : " << (*it).getLine() << " : Analyzer Error : " << e.what() << (*it).getValue() << std::endl;
+		throw ;
+	}
 }
 
 bool			Analyzer::_isLParenthesis(Token & token)

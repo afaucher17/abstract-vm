@@ -33,8 +33,7 @@ size_t						Tokenizer::_findNotComment(size_t * last_found, size_t * line, std::
 			*last_found = found;
 			return found;
 		}
-		*last_found = found + 1;
-		(*line)++;
+		*last_found = found;
 		return Tokenizer::_findNotComment(last_found, line, content);
 	}
 	return found;
@@ -45,7 +44,7 @@ std::list<Token> *			Tokenizer::tokenize(std::string const & content)
 	std::list<Token> *		tokens = new std::list<Token>;
 	size_t					found = 0;
 	size_t					last_found = 0;
-	size_t					line = 0;
+	size_t					line = 1;
 
 	found = Tokenizer::_findNotComment(&last_found, &line, content);
 	while (found != std::string::npos)

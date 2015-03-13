@@ -41,7 +41,6 @@ class OperandFactory
 		IOperand const *	_createInt32( std::string const & value ) const;
 		IOperand const *	_createFloat( std::string const & value ) const;
 		IOperand const *	_createDouble( std::string const & value ) const;
-		std::string			_trimFloat( std::string const & value ) const;
 		OperandFactory(OperandFactory const & src);
 		OperandFactory &	operator=(OperandFactory const & rhs);
 };

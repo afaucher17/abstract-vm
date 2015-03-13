@@ -90,7 +90,7 @@ IOperand const *		Calculator::mod(IOperand const & lhs, IOperand const & rhs)
 	if (rv == 0)
 		throw FloatingPointException();
 	else
-		lv = lv / rv;
+		lv = std::fmod(lv, rv);
 	ss << lv;
 	return (fact.createOperand(type, ss.str()));
 }

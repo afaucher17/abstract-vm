@@ -50,7 +50,6 @@ eOperandType							InstructionFactory::_checkOperandType(Token token)
 		if (token.getValue().compare(tab[i]) == 0)
 			return static_cast<eOperandType>(i);
 	}
-	std::cout << "problem" << std::endl;
 	return static_cast<eOperandType>(0);
 }
 

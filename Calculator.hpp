@@ -10,7 +10,10 @@
 class Calculator
 {
 	public:
-		class FloatingPointException : public std::exception
+		class CalculatorException : public std::exception
+		{
+		};
+		class FloatingPointException : public CalculatorException
 		{
 			public:
 				virtual const char *			what() const throw();

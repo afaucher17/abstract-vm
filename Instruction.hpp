@@ -14,6 +14,21 @@ class Instruction
 		class InstructionException : public std::exception
 		{
 		};
+		class PopEmptyStackException : public InstructionException
+		{
+			public:
+				virtual const char *	what() const throw();
+		};
+		class AssertEmptyStackException : public InstructionException
+		{
+			public:
+				virtual const char *	what() const throw();
+		};
+		class PrintEmptyStackException : public InstructionException
+		{
+			public:
+				virtual const char *	what() const throw();
+		};
 		class EmptyStackException : public InstructionException
 		{
 			public:
@@ -25,6 +40,11 @@ class Instruction
 				virtual const char *	what() const throw();
 		};
 		class NotEnoughValuesException : public InstructionException
+		{
+			public:
+				virtual const char *	what() const throw();
+		};
+		class PrintNotCharException : public InstructionException
 		{
 			public:
 				virtual const char *	what() const throw();

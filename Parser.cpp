@@ -1,67 +1,74 @@
 
 #include "Parser.hpp"
 
-Parser::ParserException::ParserException(std::string message, size_t line) : _message(message), _line(line)
+const char *					Parser::InstructionException::what() const throw()
 {
-	return ;
+	return ("Instruction exception : instruction 'push | pop | dump | assert | add | sub | mul | div | print | exit' expected, got ");
 }
 
-Parser::ParserException::ParserException(ParserException const & src)
+const char *					Parser::PrecisionException::what() const throw()
 {
-	*this = src;
-	return ;
+	return ("Precision exception : precision 'int8 | int16 | int32 | float | double' expected, got ");
 }
 
-Parser::ParserException::~ParserException(void) throw()
+const char *					Parser::LeftParenthesisException::what() const throw()
 {
-	return ;
+	return ("Left Parenthesis exception : '(' expected, got ");
 }
 
-const char *					Parser::ParserException::what() const throw()
+const char *					Parser::RightParenthesisException::what() const throw()
 {
-	std::stringstream ss;
-
-	ss << "Line " << this->_line << " : syntax error : " << this->_message;
-	return ss.str().c_str();
+	return ("Right Parenthesis exception : ')' expected, got ");
 }
 
-Parser::ParserException &		Parser::ParserException::operator=(ParserException const & rhs)
+const char *					Parser::NaturalValueException::what() const throw()
 {
-	this->_message = rhs._message;
-	this->_line = rhs._line;
-	return *this;
+	return ("Natural Value exception : '[-]?[0..9]+' expected, got ");
+}
+
+const char *					Parser::FloatingValueException::what() const throw()
+{
+	return ("Floating Value exception : '[-]?[0..9]+.[0..9]+' expected, got ");
+}
+
+const char *					Parser::SeparatorException::what() const throw()
+{
+	return ("Separator exception : '\\n' expected, got ");
 }
 
 bool		Parser::parse(std::list<Token> * tokens)
 {
 	std::list<Token>::const_iterator	it = tokens->begin();
 
-	while ((*it).getType() == SEPARATOR)
-		++it;
-	if (!Parser::isInstr(&it))
-		return false;
-	while ((*it).getType() != END_OF_FILE)
+	try
 	{
-		if (!Parser::isSeparator(&it) || !Parser::isInstr(&it))
+		while ((*it).getType() == SEPARATOR)
+			++it;
+		if (!Parser::isInstr(&it))
 			return false;
+		while ((*it).getType() != END_OF_FILE)
+		{
+			if (!Parser::isSeparator(&it) || !Parser::isInstr(&it))
+				return false;
+		}
+	}
+	catch (const ParserException & e)
+	{
+		std::cerr << "Line " << (*it).getLine() << " : Parse error : " << e.what() << (*it).getValue() << std::endl;
+		throw;
 	}
 	return true;
 }
 
 bool		Parser::isInstr(std::list<Token>::const_iterator * ptr_it)
 {
-	std::stringstream ss;
-
 	if ((*(*ptr_it)).getType() == END_OF_FILE)
 		return true;
 	if (Parser::isOperator(ptr_it))
 		return true;
 	if (Parser::isValueOperator(ptr_it))
 		return (Parser::isValue(ptr_it));
-	ss << "instruction { push | pop | dump | assert | add | sub | mul | div | print | exit } expected, got ";
-	ss << (*(*ptr_it)).toString();
-	throw Parser::ParserException(ss.str(), (*(*ptr_it)).getLine());
-	return false;
+	throw InstructionException();
 }
 
 
@@ -88,16 +95,11 @@ bool		Parser::isValueOperator(std::list<Token>::const_iterator * ptr_it)
 
 bool		Parser::isValue(std::list<Token>::const_iterator * ptr_it)
 {
-	std::stringstream ss;
-
 	if (Parser::isIntPrecision(ptr_it))
 		return (Parser::isLeftParenthesis(ptr_it) && Parser::isNaturalValue(ptr_it) && Parser::isRightParenthesis(ptr_it));
 	if (Parser::isFloatPrecision(ptr_it))
 		return (Parser::isLeftParenthesis(ptr_it) && Parser::isFloatingValue(ptr_it) && Parser::isRightParenthesis(ptr_it));
-	ss << "precision {int8 | int 16 | int32 | float | double} expected, got ";
-	ss << (*(*ptr_it)).toString();
-	throw Parser::ParserException(ss.str(), (*(*ptr_it)).getLine());
-	return false;
+	throw PrecisionException();
 }
 
 bool		Parser::isIntPrecision(std::list<Token>::const_iterator * ptr_it)
@@ -122,17 +124,12 @@ bool		Parser::isFloatPrecision(std::list<Token>::const_iterator * ptr_it)
 
 bool		Parser::isLeftParenthesis(std::list<Token>::const_iterator * ptr_it)
 {
-	std::stringstream ss;
-
 	if ((*(*ptr_it)).getType() == LPARENTHESIS)
 	{
 		++(*ptr_it);
 		return true;
 	}
-	ss << "left parenthesis expected, got ";
-	ss << (*(*ptr_it)).toString();
-	throw Parser::ParserException(ss.str(), (*(*ptr_it)).getLine());
-	return false;
+	throw LeftParenthesisException();
 }
 
 bool		Parser::isRightParenthesis(std::list<Token>::const_iterator * ptr_it)
@@ -144,47 +141,32 @@ bool		Parser::isRightParenthesis(std::list<Token>::const_iterator * ptr_it)
 		++(*ptr_it);
 		return true;
 	}
-	ss << "right parenthesis expected, got ";
-	ss << (*(*ptr_it)).toString();
-	throw Parser::ParserException(ss.str(), (*(*ptr_it)).getLine());
-	return false;
+	throw RightParenthesisException();
 }
 
 bool		Parser::isNaturalValue(std::list<Token>::const_iterator * ptr_it)
 {
-	std::stringstream ss;
-
 	if ((*(*ptr_it)).getType() == NATURAL_VAL)
 	{
 		++(*ptr_it);
 		return true;
 	}
-	ss << "natural value expected, got ";
-	ss << (*(*ptr_it)).toString();
-	throw Parser::ParserException(ss.str(), (*(*ptr_it)).getLine());
-	return false;
+	throw NaturalValueException();
 }
 
 bool		Parser::isFloatingValue(std::list<Token>::const_iterator * ptr_it)
 {
-	std::stringstream ss;
-
 	if ((*(*ptr_it)).getType() == FLOATING_VAL)
 	{
 		++(*ptr_it);
 		return true;
 	}
-	ss << "floating value expected, got ";
-	ss << (*(*ptr_it)).toString();
-	throw Parser::ParserException(ss.str(), (*(*ptr_it)).getLine());
-	return false;
+	throw FloatingValueException();
 }
 
 bool		Parser::isSeparator(std::list<Token>::const_iterator * ptr_it)
 {
-	std::stringstream	ss;
 	size_t				i = 0;
-
 	while ((*(*ptr_it)).getType() == SEPARATOR)
 	{
 		++(*ptr_it);
@@ -192,8 +174,5 @@ bool		Parser::isSeparator(std::list<Token>::const_iterator * ptr_it)
 	}
 	if (i > 0)
 		return true;
-	ss << "separator expected, got ";
-	ss << (*(*ptr_it)).toString();
-	throw Parser::ParserException(ss.str(), (*(*ptr_it)).getLine());
-	return false;
+	throw SeparatorException();
 }

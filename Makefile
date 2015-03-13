@@ -2,7 +2,9 @@ CXX = g++
 
 CXXFLAGS = -Wall -Werror -Wextra -g -std=c++98 -pedantic-errors
 
-SOURCES = Tokenizer.cpp \
+SOURCES = AbstractVM.cpp \
+		  FileManager.cpp \
+		  Tokenizer.cpp \
 		  Token.cpp \
 		  Analyzer.cpp \
 		  Calculator.cpp \
