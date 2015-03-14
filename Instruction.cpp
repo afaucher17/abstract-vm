@@ -142,7 +142,7 @@ bool				Instruction::_assert(std::list<const IOperand *> & stk) const
 		throw AssertEmptyStackException();
 	op1 = of.createOperand(this->_otype, this->_value);
 	op2 = (*stk.begin());
-	if (op1->getType() != op2->getType() || op1->toString().compare(op2->toString()) != 0)
+	if (op1->getType() != op2->getType() || std::atof(op1->toString().c_str()) != std::atof(op2->toString().c_str()))
 		throw AssertException();
 	return (false);
 }
