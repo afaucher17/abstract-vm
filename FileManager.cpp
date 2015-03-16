@@ -28,12 +28,12 @@ std::string const		FileManager::getFile()
 	std::stringstream	ss;
 	std::string			buff;
 
-	do
+	std::getline(std::cin, buff);
+	while (buff.compare(";;") != 0)
 	{
 		ss << buff << std::endl;
 		std::getline(std::cin, buff);
 	}
-	while (buff.compare(";;") != 0);
 	return ss.str();
 }
 

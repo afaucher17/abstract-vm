@@ -54,7 +54,7 @@ bool		Parser::parse(std::list<Token> * tokens)
 	}
 	catch (const ParserException & e)
 	{
-		std::cerr << "Line " << (*it).getLine() << " : Parse error : " << e.what() << (*it).getValue() << std::endl;
+		std::cerr << "Line " << (*it).getLine() << " : Parse error : " << e.what() << (*it).toString() << std::endl;
 		throw;
 	}
 	return true;
