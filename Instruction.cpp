@@ -250,7 +250,7 @@ bool				Instruction::_print(std::list<const IOperand *> & stk) const
 	if (stk.empty())
 		throw EmptyStackException();
 	op1 = (*stk.begin());
-	if (op1->getType() == INT8)
+	if (op1->getType() != INT8)
 		throw PrintNotCharException();
 	std::cout << static_cast<char>(std::atoi(op1->toString().c_str())) << std::endl;
 	return (false);
